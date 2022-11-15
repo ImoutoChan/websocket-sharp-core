@@ -8,7 +8,9 @@
     <Product />
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageId>websocketsharp.core</PackageId>
-    <Version>1.0.0</Version>
+    <Version>1.1.0</Version>
+    <SignAssembly>True</SignAssembly>
+    <AssemblyOriginatorKeyFile>websocket-sharp-core.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
 </Project>
