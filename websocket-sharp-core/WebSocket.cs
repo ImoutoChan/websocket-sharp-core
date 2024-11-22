@@ -110,6 +110,7 @@ namespace WebSocketSharp
         private ClientSslConfiguration _sslConfig;
         private Stream _stream;
         private TcpClient _tcpClient;
+        private bool _noDelay;
         private Uri _uri;
         private const string _version = "13";
         private TimeSpan _waitTime;
@@ -447,6 +448,15 @@ namespace WebSocketSharp
             get { return _logger; }
 
             internal set { _logger = value; }
+        }
+
+        /// <summary>
+        /// Nagle's algorithm. Disable the delay when send or receive buffers are not full. If true, disable the delay. Default is false.
+        /// </summary>
+        public bool NoDelay
+        {
+            get { return _noDelay; }
+            set { _noDelay = value; }
         }
 
         /// <summary>
@@ -1760,6 +1770,7 @@ namespace WebSocketSharp
                     {
                         releaseClientResources();
                         _tcpClient = new TcpClient();
+                        _tcpClient.NoDelay = _noDelay;
                         await _tcpClient.ConnectAsync(_proxyUri.DnsSafeHost, _proxyUri.Port);
                         _stream = _tcpClient.GetStream();
                     }
@@ -1784,6 +1795,7 @@ namespace WebSocketSharp
             if (_proxyUri != null)
             {
                 _tcpClient = new TcpClient();
+                _tcpClient.NoDelay = _noDelay;
                 _tcpClient.ConnectAsync(_proxyUri.DnsSafeHost, _proxyUri.Port).WaitForResult();
                 _stream = _tcpClient.GetStream();
                 sendProxyConnectRequest();
@@ -1791,6 +1803,7 @@ namespace WebSocketSharp
             else
             {
                 _tcpClient = new TcpClient();
+                _tcpClient.NoDelay = _noDelay;
                 _tcpClient.ConnectAsync(_uri.DnsSafeHost, _uri.Port).WaitForResult();
                 _stream = _tcpClient.GetStream();
             }

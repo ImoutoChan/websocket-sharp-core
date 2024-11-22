@@ -69,6 +69,7 @@ namespace WebSocketSharp.Server
     private Logger                             _logger;
     private int                                _port;
     private string                             _realm;
+    private bool                               _noDelay;
     private Thread                             _receiveThread;
     private bool                               _reuseAddress;
     private bool                               _secure;
@@ -387,6 +388,15 @@ namespace WebSocketSharp.Server
         return _logger;
       }
     }
+    
+    /// <summary>
+    /// Nagle's algorithm. Disable the delay when send or receive buffers are not full. If true, disable the delay. Default is false.
+    /// </summary>
+    public bool NoDelay
+    {
+      get { return _noDelay; }
+      set { _noDelay = value; }
+    }
 
     /// <summary>
     /// Gets the port on which to listen for incoming connection requests.
@@ -616,6 +626,7 @@ namespace WebSocketSharp.Server
       while (true) {
         try {
           var cl = await _listener.AcceptTcpClientAsync();
+          cl.NoDelay = _noDelay;
           ThreadPool.QueueUserWorkItem (
             state => {
               try {
